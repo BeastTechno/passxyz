@@ -226,39 +226,45 @@
         }
 
         function searchPasswords() {
-            var websiteSearch = document.getElementById("websiteSearch").value.toUpperCase();
-            var usernameSearch = document.getElementById("usernameSearch").value.toUpperCase();
-            var passwordSearch = document.getElementById("passwordSearch").value.toUpperCase();
+    var websiteSearch = document.getElementById("websiteSearch").value.toUpperCase();
+    var usernameSearch = document.getElementById("usernameSearch").value.toUpperCase();
+    var passwordSearch = document.getElementById("passwordSearch").value.toUpperCase();
 
-            var passwords = document.getElementsByClassName("password-entry");
-            var errorMessage = document.getElementById("errorMessage");
+    var passwords = document.getElementsByClassName("password-entry");
+    var errorMessage = document.getElementById("errorMessage");
 
-            var found = false;
+    var found = false;
 
-            for (var i = 0; i < passwords.length; i++) {
-                var passwordEntry = passwords[i];
-                var txtValue = passwordEntry.textContent || passwordEntry.innerText;
+    for (var i = 0; i < passwords.length; i++) {
+        var passwordEntry = passwords[i];
+        
+        // Create a temporary element to extract text content
+        var tempElement = document.createElement("div");
+        tempElement.innerHTML = passwordEntry.innerHTML;
+        
+        var txtValue = tempElement.textContent || tempElement.innerText;
 
-                if (
-                    txtValue.toUpperCase().includes(websiteSearch) ||
-                    txtValue.toUpperCase().includes(usernameSearch) ||
-                    txtValue.toUpperCase().includes(passwordSearch)
-                ) {
-                    passwordEntry.style.display = "";
-                    found = true;
-                } else {
-                    passwordEntry.style.display = "none";
-                }
-            }
-
-            errorMessage.innerText = found ? "" : "Error 404: No matching entries found.";
-
-            if (found) {
-                setTimeout(function () {
-                    fadeOutErrorMessage();
-                }, 5000);
-            }
+        if (
+            txtValue.toUpperCase().includes(websiteSearch) ||
+            txtValue.toUpperCase().includes(usernameSearch) ||
+            txtValue.toUpperCase().includes(passwordSearch)
+        ) {
+            passwordEntry.style.display = "";
+            found = true;
+        } else {
+            passwordEntry.style.display = "none";
         }
+    }
+
+    errorMessage.innerText = found ? "" : "Error 404: No matching entries found.";
+
+    if (found) {
+        setTimeout(function () {
+            fadeOutErrorMessage();
+        }, 5000);
+    }
+}
+
 
         function fadeOutErrorMessage() {
             var errorMessage = document.getElementById("errorMessage");
