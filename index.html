@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 80vw; /* Adjust the width as needed */
+            max-width: 600px; /* Set a max-width for responsiveness */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .password-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: #fff;
+            padding: 5px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .saved-passwords {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .show-passwords-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .show-passwords-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .return-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .return-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .search-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .search-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .error-message {
+            color: #f44336;
+            margin-bottom: 16px;
+            transition: opacity 1s ease-in-out;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="passwordManager">
+        <h1>Password Manager</h1>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <label for="websiteSearch">Search by website:</label>
+            <input type="text" id="websiteSearch" class="search-input">
+
+            <label for="usernameSearch">Search by username:</label>
+            <input type="text" id="usernameSearch" class="search-input">
+
+            <label for="passwordSearch">Search by password:</label>
+            <input type="text" id="passwordSearch" class="search-input">
+
+            <button class="search-btn" onclick="searchPasswords()">Search</button>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="passwordForm">
+            <label for="website">Website:</label>
+            <input type="text" id="website" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+
+            <button type="button" onclick="savePassword()">Save Password</button>
+            <button type="button" onclick="showPasswords()">Show Passwords</button>
+        </form>
+
+        <div id="passwordList" class="saved-passwords">
+            <button class="return-btn" onclick="returnToMain()">Return to Main Page</button>
+        </div>
+    </div>
+
+    <script>
+        function savePassword() {
+            var website = document.getElementById("website").value;
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            var passwordList = document.getElementById("passwordList");
+            var passwordEntry = document.createElement("div");
+            passwordEntry.className = "password-entry";
+            passwordEntry.innerHTML = "<strong>Website:</strong> " + website + "<br><strong>Username:</strong> " + username + "<br><strong>Password:</strong> " + password;
+
+            var deleteButton = document.createElement("button");
+            deleteButton.className = "delete-btn";
+            deleteButton.innerText = "Delete";
+            deleteButton.onclick = function () {
+                passwordList.removeChild(passwordEntry);
+            };
+
+            passwordEntry.appendChild(deleteButton);
+            passwordList.appendChild(passwordEntry);
+
+            document.getElementById("passwordForm").reset();
+        }
+
+        function showPasswords() {
+            document.getElementById("passwordForm").style.display = "none";
+            document.getElementById("passwordList").style.display = "block";
+            document.getElementById("websiteSearch").value = "";
+            document.getElementById("usernameSearch").value = "";
+            document.getElementById("passwordSearch").value = "";
+            document.getElementById("errorMessage").innerText = "";
+        }
+
+        function returnToMain() {
+            document.getElementById("passwordForm").style.display = "block";
+            document.getElementById("passwordList").style.display = "none";
+            document.getElementById("websiteSearch").value = "";
+            document.getElementById("usernameSearch").value = "";
+            document.getElementById("passwordSearch").value = "";
+            document.getElementById("errorMessage").innerText = "";
+        }
+
+        function searchPasswords() {
+            var websiteSearch = document.getElementById("websiteSearch").value.toUpperCase();
+            var usernameSearch = document.getElementById("usernameSearch").value.toUpperCase();
+            var passwordSearch = document.getElementById("passwordSearch").value.toUpperCase();
+
+            var passwords = document.getElementsByClassName("password-entry");
+            var errorMessage = document.getElementById("errorMessage");
+
+            var found = false;
+
+            for (var i = 0; i < passwords.length; i++) {
+                var passwordEntry = passwords[i];
+                var txtValue = passwordEntry.textContent || passwordEntry.innerText;
+
+                if (
+                    txtValue.toUpperCase().includes(websiteSearch) ||
+                    txtValue.toUpperCase().includes(usernameSearch) ||
+                    txtValue.toUpperCase().includes(passwordSearch)
+                ) {
+                    passwordEntry.style.display = "";
+                    found = true;
+                } else {
+                    passwordEntry.style.display = "none";
+                }
+            }
+
+            errorMessage.innerText = found ? "" : "Error 404: No matching entries found.";
+
+            if (found) {
+                setTimeout(function () {
+                    fadeOutErrorMessage();
+                }, 5000);
+            }
+        }
+
+        function fadeOutErrorMessage() {
+            var errorMessage = document.getElementById("errorMessage");
+            errorMessage.style.opacity = 0;
+            setTimeout(function () {
+                errorMessage.innerText = "";
+                errorMessage.style.opacity = 1;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<
