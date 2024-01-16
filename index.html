@@ -180,27 +180,73 @@
 
     <script>
         function savePassword() {
-            var website = document.getElementById("website").value;
-            var username = document.getElementById("username").value;
-            var password = document.getElementById("password").value;
+    var website = document.getElementById("website").value;
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
 
-            var passwordList = document.getElementById("passwordList");
+    var passwordList = document.getElementById("passwordList");
+    var passwordEntry = document.createElement("div");
+    passwordEntry.className = "password-entry";
+    passwordEntry.innerHTML = "<strong>Website:</strong> " + website + "<br><strong>Username:</strong> " + username + "<br><strong>Password:</strong> " + password;
+
+    var deleteButton = document.createElement("button");
+    deleteButton.className = "delete-btn";
+    deleteButton.innerText = "Delete";
+    deleteButton.onclick = function () {
+        passwordList.removeChild(passwordEntry);
+        saveToLocalStorage();
+    };
+
+    passwordEntry.appendChild(deleteButton);
+    passwordList.appendChild(passwordEntry);
+
+    saveToLocalStorage();
+
+    document.getElementById("passwordForm").reset();
+}
+
+function saveToLocalStorage() {
+    var passwords = [];
+    var passwordEntries = document.getElementsByClassName("password-entry");
+
+    for (var i = 0; i < passwordEntries.length; i++) {
+        var passwordEntry = passwordEntries[i];
+        var tempElement = document.createElement("div");
+        tempElement.innerHTML = passwordEntry.innerHTML;
+        var txtValue = tempElement.textContent || tempElement.innerText;
+        passwords.push(txtValue);
+    }
+
+    localStorage.setItem("savedPasswords", JSON.stringify(passwords));
+}
+
+// Load saved passwords from localStorage on page load
+window.onload = function () {
+    var savedPasswords = localStorage.getItem("savedPasswords");
+
+    if (savedPasswords) {
+        var passwordList = document.getElementById("passwordList");
+        var passwords = JSON.parse(savedPasswords);
+
+        for (var i = 0; i < passwords.length; i++) {
             var passwordEntry = document.createElement("div");
             passwordEntry.className = "password-entry";
-            passwordEntry.innerHTML = "<strong>Website:</strong> " + website + "<br><strong>Username:</strong> " + username + "<br><strong>Password:</strong> " + password;
+            passwordEntry.innerHTML = passwords[i];
 
             var deleteButton = document.createElement("button");
             deleteButton.className = "delete-btn";
             deleteButton.innerText = "Delete";
             deleteButton.onclick = function () {
                 passwordList.removeChild(passwordEntry);
+                saveToLocalStorage();
             };
 
             passwordEntry.appendChild(deleteButton);
             passwordList.appendChild(passwordEntry);
-
-            document.getElementById("passwordForm").reset();
         }
+    }
+};
+
 
         function showPasswords() {
             document.getElementById("passwordForm").style.display = "none";
