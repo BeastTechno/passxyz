@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +19,8 @@
         }
 
         .container {
-            width: 80vw; /* Adjust the width as needed */
-            max-width: 600px; /* Set a max-width for responsiveness */
+            width: 80vw;
+            max-width: 600px;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -144,18 +145,16 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container" id="passwordManager">
         <h1>Password Manager</h1>
 
         <!-- Search Bar -->
-        <!-- <div class="search-bar">
+        <div class="search-bar">
             <label for="websiteSearch">Search by website:</label>
             <input type="text" id="websiteSearch" class="search-input" oninput="searchPasswords()">
-            
-
-            <button class="search-btn" onclick="searchPasswords()">Search</button>
-        </div> -->
+        </div>
 
         <div class="error-message" id="errorMessage"></div>
 
@@ -180,58 +179,14 @@
 
     <script>
         function savePassword() {
-    var website = document.getElementById("website").value;
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+            var website = document.getElementById("website").value;
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
 
-    var passwordList = document.getElementById("passwordList");
-    var passwordEntry = document.createElement("div");
-    passwordEntry.className = "password-entry";
-    passwordEntry.innerHTML = "<strong>Website:</strong> " + website + "<br><strong>Username:</strong> " + username + "<br><strong>Password:</strong> " + password;
-
-    var deleteButton = document.createElement("button");
-    deleteButton.className = "delete-btn";
-    deleteButton.innerText = "Delete";
-    deleteButton.onclick = function () {
-        passwordList.removeChild(passwordEntry);
-        saveToLocalStorage();
-    };
-
-    passwordEntry.appendChild(deleteButton);
-    passwordList.appendChild(passwordEntry);
-
-    saveToLocalStorage();
-
-    document.getElementById("passwordForm").reset();
-}
-
-function saveToLocalStorage() {
-    var passwords = [];
-    var passwordEntries = document.getElementsByClassName("password-entry");
-
-    for (var i = 0; i < passwordEntries.length; i++) {
-        var passwordEntry = passwordEntries[i];
-        var tempElement = document.createElement("div");
-        tempElement.innerHTML = passwordEntry.innerHTML;
-        var txtValue = tempElement.textContent || tempElement.innerText;
-        passwords.push(txtValue);
-    }
-
-    localStorage.setItem("savedPasswords", JSON.stringify(passwords));
-}
-
-// Load saved passwords from localStorage on page load
-window.onload = function () {
-    var savedPasswords = localStorage.getItem("savedPasswords");
-
-    if (savedPasswords) {
-        var passwordList = document.getElementById("passwordList");
-        var passwords = JSON.parse(savedPasswords);
-
-        for (var i = 0; i < passwords.length; i++) {
+            var passwordList = document.getElementById("passwordList");
             var passwordEntry = document.createElement("div");
             passwordEntry.className = "password-entry";
-            passwordEntry.innerHTML = passwords[i];
+            passwordEntry.innerHTML = "<strong>Website:</strong> " + website + "<br><strong>Username:</strong> " + username + "<br><strong>Password:</strong> " + password;
 
             var deleteButton = document.createElement("button");
             deleteButton.className = "delete-btn";
@@ -243,46 +198,281 @@ window.onload = function () {
 
             passwordEntry.appendChild(deleteButton);
             passwordList.appendChild(passwordEntry);
-        }
-    }
-};
 
+            saveToLocalStorage();
+
+            document.getElementById("passwordForm").reset();
+        }
 
         function showPasswords() {
             document.getElementById("passwordForm").style.display = "none";
-            document.getElementById("passwordList").style.display = "block";
-            document.getElementById("websiteSearch").value = "";
-            document.getElementById("usernameSearch").value = "";
-            document.getElementById("passwordSearch").value = "";
-            document.getElementById("errorMessage").innerText = "";
+            document.getElementById("passwordList").style.display = "block"
+
+document.getElementById("websiteSearch").value = "";
+document.getElementById("usernameSearch").value = "";
+document.getElementById("passwordSearch").value = "";
+document.getElementById("errorMessage").innerText = "";
+}
+
+
+    function returnToMain() {
+        document.getElementById("passwordForm").style.display = "block";
+        document.getElementById("passwordList").style.display = "none";
+        document.getElementById("websiteSearch").value = "";
+        document.getElementById("usernameSearch").value = "";
+        document.getElementById("passwordSearch").value = "";
+        document.getElementById("errorMessage").innerText = "";
+    }
+
+    function searchPasswords() {
+        var websiteSearch = document.getElementById("websiteSearch").value.trim().toLowerCase();
+        var usernameSearch = document.getElementById("usernameSearch").value.trim().toLowerCase();
+        var passwordSearch = document.getElementById("passwordSearch").value.trim().toLowerCase();
+
+        var passwords = document.getElementsByClassName("password-entry");
+        var errorMessage = document.getElementById("errorMessage");
+
+        var found = false;
+
+        for (var i = 0; i < passwords.length; i++) {
+            var passwordEntry = passwords[i];
+
+            // Create a temporary element to extract text content
+            var tempElement = document.createElement("div");
+            tempElement.innerHTML = passwordEntry.innerHTML;
+
+            var txtValue = tempElement.textContent || tempElement.innerText;
+
+            // Check if any of the search fields match the entry
+            if (
+                txtValue.toLowerCase().includes(websiteSearch) ||
+                txtValue.toLowerCase().includes(usernameSearch) ||
+                txtValue.toLowerCase().includes(passwordSearch)
+            ) {
+                passwordEntry.style.display = "";
+                found = true;
+            } else {
+                passwordEntry.style.display = "none";
+            }
         }
 
-        function returnToMain() {
-            document.getElementById("passwordForm").style.display = "block";
-            document.getElementById("passwordList").style.display = "none";
-            document.getElementById("websiteSearch").value = "";
-            document.getElementById("usernameSearch").value = "";
-            document.getElementById("passwordSearch").value = "";
-            document.getElementById("errorMessage").innerText = "";
-        }
+        errorMessage.innerText = found ? "" : "Error 404: No matching entries found.";
 
-       
-
-
-
-
-
-        function fadeOutErrorMessage() {
-            var errorMessage = document.getElementById("errorMessage");
-            errorMessage.style.opacity = 0;
+        if (found) {
             setTimeout(function () {
-                errorMessage.innerText = "";
-                errorMessage.style.opacity = 1;
-            }, 1000);
+                fadeOutErrorMessage();
+            }, 5000);
         }
-    </script>
+    }
+
+    function fadeOutErrorMessage() {
+        var errorMessage = document.getElementById("errorMessage");
+        errorMessage.style.opacity = 0;
+        setTimeout(function () {
+            errorMessage.innerText = "";
+            errorMessage.style.opacity = 1;
+        }, 1000);
+    }
+
+    function saveToLocalStorage() {
+        var passwords = [];
+        var passwordEntries = document.getElementsByClassName("password-entry");
+
+        for (var i = 0; i < passwordEntries.length; i++) {
+            var passwordEntry = passwordEntries[i];
+            var tempElement = document.createElement("div");
+            tempElement.innerHTML = passwordEntry.innerHTML;
+            var txtValue = tempElement.textContent || tempElement.innerText;
+            passwords.push(txtValue);
+        }
+
+        localStorage.setItem("savedPasswords", JSON.stringify(passwords));
+    }
+
+    // Load saved passwords from localStorage on page load
+    window.onload = function () {
+        applyStyles();
+        loadSavedPasswords();
+    };
+
+    function applyStyles() {
+    var styles = `
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 80vw;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .password-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: #fff;
+            padding: 5px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .saved-passwords {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .show-passwords-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .show-passwords-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .return-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .return-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .search-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .search-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .error-message {
+            color: #f44336;
+            margin-bottom: 16px;
+            transition: opacity 1s ease-in-out;
+            opacity: 1;
+        }
+    `;
+
+    var styleElement = document.createElement("style");
+    styleElement.type = "text/css";
+
+    if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText = styles;
+    } else {
+        styleElement.appendChild(document.createTextNode(styles));
+    }
+
+    document.head.appendChild(styleElement);
+}
+
+    function loadSavedPasswords() {
+        var savedPasswords = localStorage.getItem("savedPasswords");
+
+        if (savedPasswords) {
+            var passwordList = document.getElementById("passwordList");
+            var passwords = JSON.parse(savedPasswords);
+
+            for (var i = 0; i < passwords.length; i++) {
+                var passwordEntry = document.createElement("div");
+                passwordEntry.className = "password-entry";
+                passwordEntry.innerHTML = passwords[i];
+
+                var deleteButton = document.createElement("button");
+                deleteButton.className = "delete-btn";
+                deleteButton.innerText = "Delete";
+                deleteButton.onclick = function () {
+                    passwordList.removeChild(passwordEntry);
+                    saveToLocalStorage();
+                };
+
+                passwordEntry.appendChild(deleteButton);
+                passwordList.appendChild(passwordEntry);
+            }
+        }
+    }
+</script>
 </body>
 </html>
-
-
->>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<
