@@ -149,18 +149,13 @@
         <h1>Password Manager</h1>
 
         <!-- Search Bar -->
-        <div class="search-bar">
+        <!-- <div class="search-bar">
             <label for="websiteSearch">Search by website:</label>
-            <input type="text" id="websiteSearch" class="search-input">
-
-            <label for="usernameSearch">Search by username:</label>
-            <input type="text" id="usernameSearch" class="search-input">
-
-            <label for="passwordSearch">Search by password:</label>
-            <input type="text" id="passwordSearch" class="search-input">
+            <input type="text" id="websiteSearch" class="search-input" oninput="searchPasswords()">
+            
 
             <button class="search-btn" onclick="searchPasswords()">Search</button>
-        </div>
+        </div> -->
 
         <div class="error-message" id="errorMessage"></div>
 
@@ -225,45 +220,10 @@
             document.getElementById("errorMessage").innerText = "";
         }
 
-        function searchPasswords() {
-    var websiteSearch = document.getElementById("websiteSearch").value.toUpperCase();
-    var usernameSearch = document.getElementById("usernameSearch").value.toUpperCase();
-    var passwordSearch = document.getElementById("passwordSearch").value.toUpperCase();
+       
 
-    var passwords = document.getElementsByClassName("password-entry");
-    var errorMessage = document.getElementById("errorMessage");
 
-    var found = false;
 
-    for (var i = 0; i < passwords.length; i++) {
-        var passwordEntry = passwords[i];
-        
-        // Create a temporary element to extract text content
-        var tempElement = document.createElement("div");
-        tempElement.innerHTML = passwordEntry.innerHTML;
-        
-        var txtValue = tempElement.textContent || tempElement.innerText;
-
-        if (
-            txtValue.toUpperCase().includes(websiteSearch) ||
-            txtValue.toUpperCase().includes(usernameSearch) ||
-            txtValue.toUpperCase().includes(passwordSearch)
-        ) {
-            passwordEntry.style.display = "";
-            found = true;
-        } else {
-            passwordEntry.style.display = "none";
-        }
-    }
-
-    errorMessage.innerText = found ? "" : "Error 404: No matching entries found.";
-
-    if (found) {
-        setTimeout(function () {
-            fadeOutErrorMessage();
-        }, 5000);
-    }
-}
 
 
         function fadeOutErrorMessage() {
